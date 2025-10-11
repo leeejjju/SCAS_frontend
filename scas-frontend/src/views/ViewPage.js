@@ -4,9 +4,12 @@ import './ViewPage.css';
 import Button from '../components/common/Button';
 
 function ViewPage() {
-    const today = new Date().toISOString().split("T")[0];
+  const today = new Date(Date.now() + 9 * 60 * 60 * 1000)
+    .toISOString()
+    .split("T")[0];
+
   const navigate = useNavigate();
-  const [date, setDate] = useState('today');
+  const [date, setDate] = useState(today);
   const [className, setClassName] = useState('');
   const [attendanceData, setAttendanceData] = useState(null);
   const [loading, setLoading] = useState(false);
