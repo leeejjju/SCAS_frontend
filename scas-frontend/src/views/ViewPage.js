@@ -93,7 +93,12 @@ function ViewPage() {
       </div>
 
       {/* 로딩/오류 표시 */}
-      {loading && <div className="loading-text">데이터 불러오는 중...</div>}
+      {loading && (
+        <div className="loading-text">
+          <span className="spinner"></span>
+          <p>데이터 불러오는 중...</p>
+        </div>
+      )}
       {error && <div className="error-text">{error}</div>}
 
       {/* 결과 표시 */}
