@@ -21,7 +21,7 @@ jobs:
       - name: Build and Push Docker Image !!!
         env:
           NAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          REPO: SCAS_frontend
+          REPO: scas-frontend
           TAG: ${{ github.sha }}
         run: |
           docker build --no-cache -t $NAME/$REPO:$TAG .
