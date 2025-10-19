@@ -23,7 +23,7 @@ jobs:
           echo "REACT_APP_ATTENDANCE_URL=${{ secrets.REACT_APP_ATTENDANCE_URL }}" >> scas-frontend/.env
           echo "REACT_APP_WHOLE_VIEW_URL=${{ secrets.REACT_APP_WHOLE_VIEW_URL }}" >> scas-frontend/.env
           echo "REACT_APP_APPSCRIPT_API_URL=${{ secrets.REACT_APP_APPSCRIPT_API_URL }}" >> scas-frontend/.env
-          cat .env
+          cat scas-frontend/.env
 
       - name: Build and Push Docker Image !!!
         env:
