@@ -20,13 +20,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-// 1. BrowserRouter를 import 합니다.
 import { BrowserRouter } from 'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* 2. <App />을 <BrowserRouter>로 감싸줍니다. */}
     <BrowserRouter>
       <App />
     </BrowserRouter>

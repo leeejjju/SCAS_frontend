@@ -1,53 +1,52 @@
-# 워크플로우의 이름을 지정합니다.
-name: CI - Build and Push to AWS ECR
+name: CI pipeline for SCAS frontend
 
-# 이 워크플로우가 언제 실행될지를 정의합니다.
 on:
   push:
-    branches: [ "main" ] # 'main' 브랜치에 코드가 push 될 때만 실행됩니다.
+    branches:
+      - main
 
-# 수행할 작업(job)들을 정의합니다.
 jobs:
-  build-and-push:
-    # 작업이 실행될 환경을 지정합니다. (Ubuntu 최신 버전)
+  build-and-deploy:
     runs-on: ubuntu-latest
-    
-    # OIDC 인증을 위해 필요한 권한을 설정합니다.
-    permissions:
-      id-token: write # AWS OIDC 인증을 위해 필수입니다.
-      contents: read
-
-    # 실제 작업 단계(step)들을 정의합니다.
     steps:
-      # 1. 소스 코드 체크아웃
-      # 리포지토리의 코드를 runner 환경으로 가져옵니다.
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout repository !!!
+        uses: actions/checkout@v3
 
-      # 2. AWS 자격 증명 설정
-      # 이전에 설정한 IAM 역할을 사용하여 AWS에 안전하게 로그인합니다.
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Log in to DockerHub !!!
+        uses: docker/login-action@v3
         with:
-          # 👇 이전에 복사한 IAM 역할의 ARN 값입니다.
-          role-to-assume: arn:aws:iam::327426387577:role/github-actions-ecr-role 
-          aws-region: ap-northeast-2
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # 3. Amazon ECR에 로그인
-      # AWS에 로그인한 자격 증명을 사용하여 ECR에 Docker 로그인을 수행합니다.
-      - name: Log in to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      # 4. Docker 이미지 빌드 및 ECR에 푸시
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build and Push Docker Image !!!
         env:
-          # ECR 주소. 바로 위 'login-ecr' 단계의 출력값을 사용합니다.
-          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          # ECR 리포지토리 이름입니다.
-          ECR_REPOSITORY: scas-frontend
-          # 이미지 태그. 고유성을 보장하기 위해 커밋 해시를 사용합니다.
-          IMAGE_TAG: ${{ github.sha }}
+          NAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          REPO: SCAS_frontend
+          TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build --no-cache -t $NAME/$REPO:$TAG .
+          docker push $NAME/$REPO:$TAG
+
+      # push argocd manifest repo to new tag: https://github.com/leeejjju/scas-manifests.git
+      - name: Checkout manifest repository
+        uses: actions/checkout@v3
+        with:
+          repository: leeejjju/scas-manifests
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: manifests
+
+      - name: Update image tag in deployment.yaml
+        run: |
+          cd manifests/apps/frontend
+          sed -i "s|image: .*|image: leeejjju/scas-frontend:${{ github.sha }}|" deployment.yaml
+          cat deployment.yaml
+
+      - name: Commit and push changes
+        run: |
+          cd manifests
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "CICD) Update new image tag to ${{ github.sha }}"
+          git push origin main
+

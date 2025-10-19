@@ -30,7 +30,6 @@ function ViewPage() {
     setAttendanceData(null);
 
     try {
-      // ✅ Google Apps Script 호출
       const response = await fetch(
         `${REACT_APP_APPSCRIPT_API_URL}?class=${encodeURIComponent(className)}&date=${encodeURIComponent(date)}`
       );
@@ -39,8 +38,7 @@ function ViewPage() {
 
       const data = await response.json();
 
-      // data는 예를 들어 이런 형태로 온다고 가정:
-      // { attendance: ["홍길동", "이영희"], bible: ["홍길동"], memory: ["이영희"] }
+      // data 형식: { attendance: ["홍길동", "이영희"], bible: ["홍길동"], memory: ["이영희"] }
       setAttendanceData(data);
     } catch (err) {
       console.error(err);
@@ -107,7 +105,7 @@ function ViewPage() {
           <h3>{`${date} 의 ${className}반 출석 현황`}</h3>
 
           <div className="data-section">
-            <h4>✅ 출석한 학생</h4>
+            <h4>✅ 출석한 학생 ✅ </h4>
             {attendanceData.attendance?.length ? (
               <ul>
                 {attendanceData.attendance.map((name, idx) => (
@@ -120,7 +118,7 @@ function ViewPage() {
           </div>
 
           <div className="data-section">
-            <h4>📖 성경책 가져온 학생</h4>
+            <h4>📖 성경책 가져온 학생 📖 </h4>
             {attendanceData.bible?.length ? (
               <ul>
                 {attendanceData.bible.map((name, idx) => (
@@ -133,7 +131,7 @@ function ViewPage() {
           </div>
 
           <div className="data-section">
-            <h4>🗣️ 암송한 학생</h4>
+            <h4>🗣️ 암송한 학생️ 🗣️ </h4>
             {attendanceData.memory?.length ? (
               <ul>
                 {attendanceData.memory.map((name, idx) => (
