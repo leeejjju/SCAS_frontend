@@ -18,6 +18,13 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Create .env file !!!
+        run: |
+          echo "REACT_APP_ATTENDANCE_URL=${{ secrets.REACT_APP_ATTENDANCE_URL }}" >> .env
+          echo "REACT_APP_WHOLE_VIEW_URL=${{ secrets.REACT_APP_WHOLE_VIEW_URL }}" >> .env
+          echo "REACT_APP_APPSCRIPT_API_URL=${{ secrets.REACT_APP_APPSCRIPT_API_URL }}" >> .env
+          cat .env
+
       - name: Build and Push Docker Image !!!
         env:
           NAME: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -49,4 +56,3 @@ jobs:
           git add .
           git commit -m "CICD) Update new image tag to ${{ github.sha }}"
           git push origin main
-
