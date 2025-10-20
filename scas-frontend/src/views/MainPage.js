@@ -18,7 +18,7 @@ function MainPage() {
   return (
     <div className="main-container">
       <img src={logo} alt="SCAS Logo" className="main-logo" />
-      <h1 className="main-text">이번 주일의 출석을 기록해 주세요!</h1>
+      <h1 className="main-text">이번 주일의 출석을 기록해 주세요!!!</h1>
       <div className="button-group">
         <Button text="출석 기록하기" onClick={handleRecordClick} type="primary" />
         <Button text="기록 확인하기" onClick={handleViewClick} type="primary" />
